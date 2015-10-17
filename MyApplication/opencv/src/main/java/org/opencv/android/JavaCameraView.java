@@ -3,8 +3,10 @@ package org.opencv.android;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.os.Build;
@@ -58,10 +60,12 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
     public JavaCameraView(Context context, int cameraId) {
         super(context, cameraId);
+        Log.d("!!!INIT", "Called java camera view 1");
     }
 
     public JavaCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        Log.d("!!!INIT", "Called java camera view 2");
     }
 
     protected boolean initializeCamera(int width, int height) {
@@ -283,9 +287,23 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
     @Override
     public void onPreviewFrame(byte[] frame, Camera arg1) {
-        Log.d(TAG, "Preview Frame received. Frame size: " + frame.length);
+        Log.d(TAG, "Preview Frame received. Frame size: " + frame.length + "Preview format "+mCamera.getParameters().getPreviewFormat()+"Size: "+
+        mCamera.getParameters().getPreviewSize().width+"x"+mCamera.getParameters().getPreviewSize().height);
         synchronized (this) {
-            mFrameChain[mChainIdx].put(0, 0, frame);
+            YuvImage img = new YuvImage(frame,arg1.getParameters().getPreviewFormat(),mCamera.getParameters().getPreviewSize().width,
+                    mCamera.getParameters().getPreviewSize().height,null);
+            Mat mat = new Mat(mFrameHeight + (mFrameHeight/2), mFrameWidth, CvType.CV_8UC1);
+            mat.put(0, 0, frame);
+            //Mat mat_rgba = new Mat();
+            //Imgproc.cvtColor(mat,mat_rgba,Imgproc.COLOR_YUV2RGB_NV21);
+
+            Mat mat_rgba = new Mat();
+            //Imgproc.cvtColor(mat,mat_rgba,Imgproc.COLOR_YUV2RGB_NV21);
+            //Imgproc.cvtColor(mat_rgba,mat,Imgproc.COLOR_RGBA2YUV_I420);
+
+            byte data[] = new byte[frame.length];
+            mat.get(0,0,data);
+            mFrameChain[mChainIdx].put(0,0,data);
             mCameraFrameReady = true;
             this.notify();
         }
@@ -301,6 +319,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
         @Override
         public Mat rgba() {
+
             Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGBA_NV21, 4);
             return mRgba;
         }
@@ -322,6 +341,41 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         private int mWidth;
         private int mHeight;
     };
+
+    private class JavaCameraFrameRGBA implements CvCameraViewFrame
+    {
+        private Mat mRgba;
+        private int mWidth;
+        private int mHeight;
+
+        @Override
+        public Mat gray() {
+            //return mYuvFrameData.submat(0, mHeight, 0, mWidth);
+            Mat grayscale = new Mat();
+            Imgproc.cvtColor(mRgba,grayscale,Imgproc.COLOR_RGBA2GRAY);
+            return grayscale.submat(0, mHeight, 0, mWidth);
+        }
+
+        @Override
+        public Mat rgba() {
+
+            return mRgba;
+        }
+
+        public JavaCameraFrameRGBA(Mat rgba, int width, int height) {
+            super();
+            mWidth = width;
+            mHeight = height;
+            //mYuvFrameData = Yuv420sp;
+            mRgba = rgba;
+        }
+
+        public void release() {
+            mRgba.release();
+        }
+
+
+    }
 
     private class CameraWorker implements Runnable {
 

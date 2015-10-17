@@ -57,6 +57,31 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
     public static final int RGBA = 1;
     public static final int GRAY = 2;
 
+    public Bitmap myBitmap;
+    private Rect faceRect;
+
+    public void setBitmap(Bitmap bm)
+    {
+        myBitmap = bm;
+    }
+
+    public void setFaceRect(Rect new_rect)
+    {
+        if(faceRect != null) {
+            synchronized (faceRect) {
+                faceRect = new_rect;
+            }
+        }
+        else if(new_rect != null)
+        {
+            synchronized (this)
+            {
+                faceRect = new_rect;
+            }
+        }
+
+    }
+
     public CameraBridgeViewBase(Context context, int cameraId) {
         super(context);
         mCameraIndex = cameraId;
@@ -399,6 +424,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         if (modified != null) {
             try {
                 Utils.matToBitmap(modified, mCacheBitmap);
+
             } catch(Exception e) {
                 Log.e(TAG, "Mat type: " + modified);
                 Log.e(TAG, "Bitmap type: " + mCacheBitmap.getWidth() + "*" + mCacheBitmap.getHeight());
@@ -426,7 +452,11 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                          (canvas.getWidth() - mCacheBitmap.getWidth()) / 2 + mCacheBitmap.getWidth(),
                          (canvas.getHeight() - mCacheBitmap.getHeight()) / 2 + mCacheBitmap.getHeight()), null);
                 }
-
+                if(myBitmap!=null && faceRect != null)
+                {
+                    canvas.drawBitmap(myBitmap,new Rect(0,0,myBitmap.getWidth(), myBitmap.getHeight()),
+                            faceRect,null);
+                }
                 if (mFpsMeter != null) {
                     mFpsMeter.measure();
                     mFpsMeter.draw(canvas, 20, 30);
