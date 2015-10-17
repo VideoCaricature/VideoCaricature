@@ -30,7 +30,7 @@ public interface IDetector {
     Must return the biggest face rectangle avaliable
     or null, if no faces were detected
      */
-    public Rect getNearestFaceRectange();
+    public Rect getNearestFaceRectangle();
 
     /*
     Used to set face size for detector to work properly

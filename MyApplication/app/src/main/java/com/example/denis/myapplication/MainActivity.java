@@ -171,6 +171,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                 }
             });
         }
+        Rect rect = detector.getNearestFaceRectangle();
+        if(rect!=null)
+            mOpenCvCameraView.setFaceRect(new android.graphics.Rect(rect.x,rect.y,rect.width+rect.x,rect.height+rect.y)  );
+        else mOpenCvCameraView.setFaceRect(null);
 
 
 

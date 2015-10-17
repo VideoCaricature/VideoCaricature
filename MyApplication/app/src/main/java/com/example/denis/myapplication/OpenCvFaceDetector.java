@@ -75,7 +75,20 @@ public class OpenCvFaceDetector implements IDetector {
     DUMMY. Must be implemented later
      */
     @Override
-    public Rect getNearestFaceRectange() {
-        return null;
+    public Rect getNearestFaceRectangle() {
+        if(faces.length==0)
+        {
+            return null;
+        }
+        int maxd = 0;
+        Rect maxface = null;
+        for(Rect face: faces)  {
+            int d = face.height*face.height+face.width*face.width;
+            if(d>maxd) {
+                maxd = d;
+                maxface = face;
+            }
+        }
+        return maxface;
     }
 }
