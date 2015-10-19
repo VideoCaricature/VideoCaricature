@@ -7,12 +7,14 @@ import android.media.FaceDetector;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,6 +36,8 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.graphics.Bitmap.Config.RGB_565;
 
@@ -43,6 +47,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     private OpenCvFaceDetector detector;
     private String text_str;
     private String api_text;
+    private MenuItem               heisenberg; //Menu pictures
+    private MenuItem               pict;
+    private MenuItem               mousestache;
+    private MenuItem               r2d2;
+    private MenuItem               black_hat;
+    private Map<MenuItem, Integer> items = new HashMap<>();//for Menu
+
 
 
     /*
@@ -102,6 +113,11 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.enableView();
     }
 
+    private void changeBitmap(int id) {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
+        mOpenCvCameraView.setBitmap(bitmap);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,9 +126,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView = (CameraBridgeViewDrawer) findViewById(R.id.view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.heisenberg);
-        mOpenCvCameraView.setBitmap(bitmap);
+        changeBitmap(R.drawable.heisenberg);
     }
 
     @Override
@@ -136,6 +150,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         super.onResume();
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this, mLoaderCallback);
     }
+
 
     public void onDestroy() {
         super.onDestroy();
@@ -176,11 +191,30 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             mOpenCvCameraView.setFaceRect(new android.graphics.Rect(rect.x,rect.y,rect.width+rect.x,rect.height+rect.y)  );
         else mOpenCvCameraView.setFaceRect(null);
 
-
-
-
         /*for (int i = 0; i <facesArray.length; i++)
             Core.rectangle(inputFrame, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0, 255), 3);*/
         return inputFrame.rgba();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        heisenberg = menu.add("heisenberg");
+        items.put(heisenberg, R.drawable.heisenberg);
+        pict = menu.add("pict");
+        items.put(pict, R.drawable.pict);
+        mousestache = menu.add("mousestache");
+        items.put(mousestache, R.drawable.moustache);
+        r2d2 = menu.add("r2d2");
+        items.put(r2d2, R.drawable.r2d2);
+        black_hat = menu.add("black_hat");
+        items.put(black_hat, R.drawable.black_hat);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = items.get(item);
+        changeBitmap(id);
+        return true;
     }
 }
