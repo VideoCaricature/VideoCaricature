@@ -111,7 +111,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pict);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.heisenberg);
         mOpenCvCameraView.setBitmap(bitmap);
     }
 
