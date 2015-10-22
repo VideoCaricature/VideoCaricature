@@ -1,11 +1,14 @@
 package com.example.denis.myapplication;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.FaceDetector;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ListPopupWindow;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -17,6 +20,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 
@@ -37,6 +41,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static android.graphics.Bitmap.Config.RGB_565;
@@ -52,7 +57,8 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     private MenuItem               mousestache;
     private MenuItem               r2d2;
     private MenuItem               black_hat;
-    private Map<MenuItem, Integer> items = new HashMap<>();//for Menu
+    //private Map<MenuItem, Integer> items = new HashMap<>();//for Menu
+
 
 
 
@@ -124,8 +130,12 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
         mOpenCvCameraView = (CameraBridgeViewDrawer) findViewById(R.id.view);
+        mOpenCvCameraView.setCameraIndex(98);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
+        mOpenCvCameraView.setOnClickListener(onClickListener);
+        TextView texty = (TextView) findViewById(R.id.textView);
+        texty.setOnClickListener(onClickListener);
         changeBitmap(R.drawable.heisenberg);
     }
 
@@ -196,25 +206,43 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         return inputFrame.rgba();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        heisenberg = menu.add("heisenberg");
-        items.put(heisenberg, R.drawable.heisenberg);
-        pict = menu.add("pict");
-        items.put(pict, R.drawable.pict);
-        mousestache = menu.add("mousestache");
-        items.put(mousestache, R.drawable.moustache);
-        r2d2 = menu.add("r2d2");
-        items.put(r2d2, R.drawable.r2d2);
-        black_hat = menu.add("black_hat");
-        items.put(black_hat, R.drawable.black_hat);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
 
-        int id = items.get(item);
-        changeBitmap(id);
-        return true;
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
+            showPopupMenu(v,popupMenu);
+        }
+    };
+
+    private void showPopupMenu(View v,PopupMenu popupMenu) {
+
+        popupMenu.inflate(R.menu.pictures_menu);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Bitmap bitmap = null;
+                switch (item.getItemId()) {
+                    case R.id.pict_heisenberg:
+                        //bitmap = BitmapFactory.decodeResource(getResources(), R.id.pict_heisenberg);
+                        changeBitmap(R.drawable.heisenberg);
+                        break;
+                    case R.id.pict_moustache:
+                        //bitmap = BitmapFactory.decodeResource(getResources(), R.id.pict_moustache);
+                        changeBitmap(R.drawable.moustache);
+                        break;
+                    default:
+                        return false;
+
+                }
+                // mOpenCvCameraView.setBitmap(bitmap);
+                return true;
+            }
+        });
+        Log.d("MENU","Showing popup menu");
+        popupMenu.show();
     }
+
+
 }

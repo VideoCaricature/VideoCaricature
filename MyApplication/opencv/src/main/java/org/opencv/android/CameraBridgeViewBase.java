@@ -62,7 +62,11 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
 
     public void setBitmap(Bitmap bm)
     {
-        myBitmap = bm;
+        Log.d("MENU","Setting bitmap");
+        synchronized (this) {
+            myBitmap = bm;
+            Log.d("MENU","Bitmap set");
+        }
     }
 
     public void setFaceRect(Rect new_rect)
