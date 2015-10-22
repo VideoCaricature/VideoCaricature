@@ -1,6 +1,6 @@
 package com.example.denis.myapplication;
 
-import android.annotation.TargetApi;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,17 +25,12 @@ import android.widget.TextView;
 
 
 import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
 import org.opencv.core.*;
 import org.opencv.core.Mat;
-import org.opencv.objdetect.CascadeClassifier;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -137,6 +132,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         TextView texty = (TextView) findViewById(R.id.textView);
         texty.setOnClickListener(onClickListener);
         changeBitmap(R.drawable.heisenberg);
+
     }
 
     @Override

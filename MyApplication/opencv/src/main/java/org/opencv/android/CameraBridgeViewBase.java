@@ -36,8 +36,8 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
     private static final int STARTED = 1;
 
     private int mState = STOPPED;
-    private Bitmap mCacheBitmap;
-    private CvCameraViewListener2 mListener;
+    protected Bitmap mCacheBitmap;
+    protected CvCameraViewListener2 mListener;
     private boolean mSurfaceExist;
     private Object mSyncObject = new Object();
 
@@ -58,7 +58,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
     public static final int GRAY = 2;
 
     public Bitmap myBitmap;
-    private Rect faceRect;
+    protected Rect faceRect;
 
     public void setBitmap(Bitmap bm)
     {
@@ -110,6 +110,8 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         mMaxWidth = MAX_UNSPECIFIED;
         mMaxHeight = MAX_UNSPECIFIED;
         styledAttrs.recycle();
+
+
     }
 
     /**
