@@ -1,7 +1,8 @@
 package com.example.denis.myapplication;
 
+import android.graphics.Rect;
+
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
 
 /**
  * Created by vasil on 11.10.2015.

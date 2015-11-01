@@ -75,7 +75,7 @@ public class OpenCvFaceDetector implements IDetector {
     DUMMY. Must be implemented later
      */
     @Override
-    public Rect getNearestFaceRectangle() {
+    public android.graphics.Rect getNearestFaceRectangle() {
         if(faces.length==0)
         {
             return null;
@@ -89,6 +89,6 @@ public class OpenCvFaceDetector implements IDetector {
                 maxface = face;
             }
         }
-        return maxface;
+        return new android.graphics.Rect(maxface.x,maxface.y,maxface.width,maxface.height);
     }
 }

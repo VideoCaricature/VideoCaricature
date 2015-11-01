@@ -4,6 +4,7 @@ package com.example.denis.myapplication;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PointF;
 import android.media.FaceDetector;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -133,6 +134,14 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         texty.setOnClickListener(onClickListener);
         changeBitmap(R.drawable.heisenberg);
 
+        TemplateElement element = new TemplateElement();
+        element.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.glasses));
+        element.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(83, 54));
+        element.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT,new PointF(256,55));
+        TemplateDrawer drawer = new TemplateDrawer();
+        drawer.addElement(element);
+        mOpenCvCameraView.setTemplateDrawer(drawer);
+
     }
 
     @Override
@@ -173,7 +182,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
-        detector.setCameraFrame(inputFrame.gray());
+        /*detector.setCameraFrame(inputFrame.gray());
 
 
         // Use the classifier to detect faces
@@ -192,13 +201,11 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                 }
             });
         }
-        Rect rect = detector.getNearestFaceRectangle();
+        android.graphics.Rect rect = detector.getNearestFaceRectangle();
         if(rect!=null)
-            mOpenCvCameraView.setFaceRect(new android.graphics.Rect(rect.x,rect.y,rect.width+rect.x,rect.height+rect.y)  );
-        else mOpenCvCameraView.setFaceRect(null);
+            mOpenCvCameraView.setFaceRect(rect);
+        else mOpenCvCameraView.setFaceRect(null);*/
 
-        /*for (int i = 0; i <facesArray.length; i++)
-            Core.rectangle(inputFrame, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0, 255), 3);*/
         return inputFrame.rgba();
     }
 
@@ -221,11 +228,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                 Bitmap bitmap = null;
                 switch (item.getItemId()) {
                     case R.id.pict_heisenberg:
-                        //bitmap = BitmapFactory.decodeResource(getResources(), R.id.pict_heisenberg);
                         changeBitmap(R.drawable.heisenberg);
                         break;
                     case R.id.pict_moustache:
-                        //bitmap = BitmapFactory.decodeResource(getResources(), R.id.pict_moustache);
                         changeBitmap(R.drawable.moustache);
                         break;
                     default:
