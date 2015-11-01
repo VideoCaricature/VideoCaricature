@@ -11,6 +11,7 @@ import java.util.List;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
@@ -53,7 +54,7 @@ public class ApplicationTest extends Activity implements CvCameraViewListener2{
     private Mat               mGrey;
     private int                              screen_w, screen_h;
     private CascadeClassifier           face_cascade;
-    private Tutorial3View            mOpenCvCameraView;
+    private JavaCameraView mOpenCvCameraView;
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -77,8 +78,8 @@ public class ApplicationTest extends Activity implements CvCameraViewListener2{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.tutorial2_activity_surface_view);
-        mOpenCvCameraView = (Tutorial3View) findViewById(R.id.tutorial2_activity_surface_view);
+        //setContentView(R.layout.tutorial2_activity_surface_view);
+        //mOpenCvCameraView = (Tutorial3View) findViewById(R.id.tutorial2_activity_surface_view);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
     }
