@@ -134,12 +134,17 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         texty.setOnClickListener(onClickListener);
         changeBitmap(R.drawable.heisenberg);
 
-        TemplateElement element = new TemplateElement();
-        element.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.glasses));
-        element.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(83, 54));
-        element.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT,new PointF(256,55));
-        TemplateDrawer drawer = new TemplateDrawer();
-        drawer.addElement(element);
+        TemplateElement element_glasses = new TemplateElement();
+        element_glasses.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.badass_glasses));
+        element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(31, 41));
+        element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT, new PointF(94, 42));
+        TemplateElement element_moustache = new TemplateElement();
+        element_moustache.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.moustache ));
+        element_moustache.addLandmark(TemplateElement.LandmarkType.MOUTH_LEFT, new PointF(205, 258));
+        element_moustache.addLandmark(TemplateElement.LandmarkType.MOUTH_RIGHT, new PointF(537, 251));
+        TemplateDrawer drawer = new TemplateDrawer("Badass");
+        drawer.addElement(element_glasses);
+        drawer.addElement(element_moustache);
         mOpenCvCameraView.setTemplateDrawer(drawer);
 
     }

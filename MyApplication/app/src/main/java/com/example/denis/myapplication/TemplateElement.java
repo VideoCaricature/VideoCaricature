@@ -2,11 +2,15 @@ package com.example.denis.myapplication;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.google.android.gms.vision.face.Landmark;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -170,14 +174,21 @@ public class TemplateElement {
 
             if(horStretch)
             {
-                float scale = Math.abs((one.point.x-two.point.x)/(landmarks.get(0).point.x-landmarks.get(1).point.x));
+                float scale = Math.abs((leftFramePoint.point.x-rightFramePoint.point.x)/
+                        (leftBasePoint.point.x-rightBasePoint.point.x)/1.5f);
+                Log.d("RESCALE","Frame marks "+leftFramePoint.point.x+" "+rightFramePoint.point.x+" "
+                        +"Base "+leftBasePoint.point.x+" "+rightBasePoint.point.x+" scale "+scale);
                 left = (int)(leftFramePoint.point.x - leftBasePoint.point.x*scale);
+
                 if(left<0)
                     left = 0;
+                Log.d("RESCALE","Left eye point "+(left+leftBasePoint.point.x*scale));
                 //right = (int)(rightFramePoint.point.x + (bitmap.getWidth()-rightBasePoint.point.x)*scale);
                 right = (int)(left+bitmap.getWidth()*scale);
                 if(right > canvas.getWidth())
                     right = canvas.getWidth();
+                Log.d("RESCALE","Right eye point "+(left+rightBasePoint.point.x*scale));
+
                 if(/*!vertStretch*/true)
                 {
                     float yBase = ((leftBasePoint.point.y+rightBasePoint.point.y)/2);
@@ -185,12 +196,18 @@ public class TemplateElement {
                     top = (int)(yFrame - scale * yBase);
                     if(top < 0 )
                         top = 0;
-                    bottom = (int)(yFrame + scale * (bitmap.getHeight()-yBase));
+                    bottom = (int)(top + scale*bitmap.getHeight());
                     if(bottom < 0 )
                         bottom = 0;
                     position = new Rect(left,top,right,bottom);
                     canvas.drawBitmap(bitmap,new Rect(0,0,bitmap.getWidth(), bitmap.getHeight()),
                             position,null);
+                    /*Paint paint = new Paint();
+                    paint.setColor(Color.BLUE);
+                    paint.setStyle(Paint.Style.STROKE); //no fill
+                    paint.setStrokeWidth(3);
+                    canvas.drawCircle(left, yFrame, 2, paint);
+                    canvas.drawCircle(right,yFrame,2,paint);*/
                     return;
                 }
             }

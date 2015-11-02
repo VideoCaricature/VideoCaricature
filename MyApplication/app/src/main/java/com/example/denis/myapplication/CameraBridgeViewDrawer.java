@@ -108,6 +108,8 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
                             ArrayList<Landmark> landmarks = new ArrayList<>();
                             landmarks.add(new Landmark(gms_detector.getLeftEye(),Landmark.LEFT_EYE));
                             landmarks.add(new Landmark(gms_detector.getRightEye(),Landmark.RIGHT_EYE));
+                            landmarks.add(new Landmark(gms_detector.getMouthLeft(),Landmark.LEFT_MOUTH));
+                            landmarks.add(new Landmark(gms_detector.getMouthRight(),Landmark.RIGHT_MOUTH));
                             templateDrawer.setLandmarks(landmarks,
                                     gms_detector.getNearestFaceRectangleFloat());
                             templateDrawer.draw(canvas);
@@ -123,7 +125,7 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
                         float y2 = face.bottom; //height of the face region in pixels
                         /*canvas.drawRoundRect(new RectF(x1 * (float) scale, y1 * (float) scale,
                                 x2 * (float) scale, y2 * (float) scale), 2, 2, paint);*/
-                        PointF leftEye = gms_detector.getLeftEye();
+                        /*PointF leftEye = gms_detector.getLeftEye();
                         if(leftEye!=null)
                             canvas.drawCircle(leftEye.x,leftEye.y,10,paint);
                         else
@@ -132,7 +134,7 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
                         if(rightEye!=null)
                             canvas.drawCircle(rightEye.x,rightEye.y,10,paint);
                         else
-                            Log.d("DRAW", "Not found right eye");
+                            Log.d("DRAW", "Not found right eye");*/
                         /*PointF mouthLeft = gms_detector.getMouthLeft();
                         if(mouthLeft!=null)
                             canvas.drawCircle(mouthLeft.x,mouthLeft.y,10,paint);

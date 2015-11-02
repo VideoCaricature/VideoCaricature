@@ -15,10 +15,12 @@ import java.util.List;
  */
 public class TemplateDrawer {
     List<TemplateElement> elements;
+    String name;
 
-    public TemplateDrawer()
+    public TemplateDrawer(String _name)
     {
         elements = new ArrayList<>();
+        name = _name;
     }
 
     void setLandmarks(List<Landmark> frameLandmarks,RectF faceRect)
