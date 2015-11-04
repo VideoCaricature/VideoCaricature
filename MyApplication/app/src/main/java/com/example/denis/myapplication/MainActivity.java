@@ -34,7 +34,7 @@ import java.util.List;
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
     private CameraBridgeViewDrawer mOpenCvCameraView;
-    private OpenCvFaceDetector detector;
+
     private List<TemplateDrawer> drawers;
 
     /*
@@ -57,9 +57,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     /*
     Load data required for OpenCV Haar cascade
      */
+
     private void initializeOpenCVDependencies() {
 
-        try {
+        /*try {
             // Copy the resource into a temp file so OpenCV can load it
             InputStream is = getResources().openRawResource(R.raw.lbpcascade_frontalface);
             File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
@@ -86,9 +87,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         } catch (Exception e) {
             Log.e("OpenCVActivity", "Error loading cascade", e);
 
-        }
+        }*/
 
-
+        mOpenCvCameraView.initFaceDetector(2,getApplicationContext());
 
         // And we are ready to go
         mOpenCvCameraView.enableView();
@@ -112,6 +113,8 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.setOnClickListener(onClickListener);
         TextView texty = (TextView) findViewById(R.id.textView);
         texty.setOnClickListener(onClickListener);
+        texty = (TextView)findViewById(R.id.textView2);
+        texty.setOnClickListener(onDetectorClickListener);
 
         drawers = new ArrayList<>();
 
@@ -176,7 +179,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     }
 
     public void onCameraViewStarted(int width, int height) {
-        detector.setAbsoluteFaceSize((int) (height * 0.2));
+
     }
 
     public void onCameraViewStopped() {
@@ -197,6 +200,14 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         }
     };
 
+    View.OnClickListener onDetectorClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            PopupMenu popupMenu = new PopupMenu(getApplicationContext(), v);
+            showDetectorPopupMenu(v, popupMenu);
+        }
+    };
+
     private void showPopupMenu(View v,PopupMenu popupMenu) {
 
         popupMenu.inflate(R.menu.pictures_menu);
@@ -209,6 +220,30 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
                         break;
                     case R.id.pict_badass:
                         mOpenCvCameraView.setTemplateDrawer(drawers.get(0));
+                        break;
+                    default:
+                        return false;
+
+                }
+                return true;
+            }
+        });
+        Log.d("MENU","Showing popup menu");
+        popupMenu.show();
+    }
+
+    private void showDetectorPopupMenu(View v,PopupMenu popupMenu) {
+
+        popupMenu.inflate(R.menu.detector_menu);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.detector_opencv:
+                        mOpenCvCameraView.initFaceDetector(2,getApplicationContext());
+                        break;
+                    case R.id.detector_gms:
+                        mOpenCvCameraView.initFaceDetector(1, getApplicationContext());
                         break;
                     default:
                         return false;

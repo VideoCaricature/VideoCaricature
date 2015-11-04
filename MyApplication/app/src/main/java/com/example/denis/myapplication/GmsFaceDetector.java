@@ -21,11 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Face detection and landmarks location via GMS of Google Play Services
  * Detection is being run in it's own thread continuously
  * When any face (nearest one) is detected, it's  geometry is cached
  * All get methods return this cache
  */
-public class GmsFaceDetector implements Runnable , IDetector {
+public class GmsFaceDetector implements Runnable , IFaceLocator {
     private FaceDetector faceDetector; //Android services face detector
     private SparseArray<Face> faces;    //array of detected faces
     private boolean detected;           //if any faces detected
@@ -136,19 +137,23 @@ public class GmsFaceDetector implements Runnable , IDetector {
         return landmarksList;
     }
 
+    @Override
     public PointF getLeftEye()
     {
         return leftEye;
     }
 
+    @Override
     public PointF getRightEye()  {
         return rightEye;
     }
 
+    @Override
     public PointF getMouthLeft() {
         return mouthLeft;
     }
 
+    @Override
     public PointF getMouthRight() {
         return mouthRight;
     }
@@ -158,6 +163,7 @@ public class GmsFaceDetector implements Runnable , IDetector {
         return cachedNearestFace;
     }
 
+    @Override
     public RectF getNearestFaceRectangleFloat()
     {
         return cachedNearestFaceFloat;
@@ -168,6 +174,7 @@ public class GmsFaceDetector implements Runnable , IDetector {
 
     }
 
+    @Override
     public void setFrame(Bitmap bm){
         frame = new Frame.Builder().setBitmap(bm).build();
         detected = false;
@@ -196,6 +203,7 @@ public class GmsFaceDetector implements Runnable , IDetector {
         }
     }
 
+    @Override
     public boolean isFaceDetected()
     {
         return isFaceDetected;

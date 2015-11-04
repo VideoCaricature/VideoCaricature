@@ -14,22 +14,22 @@ android:layout_height="match_parent"
     <TextView
         android:layout_width="247dp"
         android:layout_height="84dp"
-        android:text="OpenCV"
+        android:text="Template"
         android:id="@+id/textView"
         android:layout_gravity="left|bottom"
-        android:gravity="center_horizontal"
-        android:textColor="#00ff00"
+        android:textColor="#AAAAAA"
         android:textSize="30sp"
-        android:typeface="serif" />
+        android:typeface="serif"
+        android:gravity="center_vertical|center_horizontal" />
 
     <TextView
         android:layout_width="247dp"
         android:layout_height="84dp"
-        android:text="API"
+        android:text="Detector"
         android:id="@+id/textView2"
         android:layout_gravity="right|bottom"
         android:gravity="center_vertical|center_horizontal"
-        android:textColor="#FF0000"
-        android:textSize="40sp" />
+        android:textColor="#AAAAAA"
+        android:textSize="30sp" />
 
 </FrameLayout>
