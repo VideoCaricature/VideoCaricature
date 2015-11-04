@@ -40,7 +40,7 @@ public class Tutorial3View extends JavaCameraView implements PictureCallback {
         mMaxHeight = resolution.height;
         mMaxWidth = resolution.width;
         connectCamera(getWidth(), getHeight());
-    }
+    }//
     public Size getResolution() {
         return mCamera.getParameters().getPreviewSize();
     }
