@@ -1,5 +1,17 @@
-package com.example.denis.myapplication;
 
+package com.example.denis.myapplication;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PointF;
+import android.media.FaceDetector;
+import android.media.FaceDetector.Face;
+import android.os.Bundle;
+import android.view.View;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,182 +51,80 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.graphics.Bitmap.Config.RGB_565;
-
-
-public class MainActivity extends Activity implements CvCameraViewListener2 {
-    private CameraBridgeViewDrawer mOpenCvCameraView;
-    private OpenCvFaceDetector detector;
-    private String text_str;
-    private String api_text;
-    private MenuItem               heisenberg; //Menu pictures
-    private MenuItem               pict;
-    private MenuItem               mousestache;
-    private MenuItem               r2d2;
-    private MenuItem               black_hat;
-    private Map<MenuItem, Integer> items = new HashMap<>();//for Menu
-
-
-
-    /*
-    Connect to OpenCVManager
-     */
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                    initializeOpenCVDependencies();
-                    break;
-                default:
-                    super.onManagerConnected(status);
-                    break;
-            }
-        }
-    };
-
-    /*
-    Load data required for OpenCV Haar cascade
-     */
-    private void initializeOpenCVDependencies() {
-
-        try {
-            // Copy the resource into a temp file so OpenCV can load it
-            InputStream is = getResources().openRawResource(R.raw.lbpcascade_frontalface);
-            File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-            File mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
-            FileOutputStream os = new FileOutputStream(mCascadeFile);
-
-
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-            is.close();
-            os.close();
-
-            detector = new OpenCvFaceDetector();
-            // Load the cascade classifier
-            if(!detector.loadCascadeClassifier(mCascadeFile))
-            {
-                Log.e("OpenCVActivity","Failed to load cascade from file");
-            }
-
-        } catch (Exception e) {
-            Log.e("OpenCVActivity", "Error loading cascade", e);
-
-        }
-
-
-
-        // And we are ready to go
-        mOpenCvCameraView.enableView();
-    }
-
-    private void changeBitmap(int id) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
-        mOpenCvCameraView.setBitmap(bitmap);
-    }
+public class MainActivity extends Activity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.activity_main);
-        mOpenCvCameraView = (CameraBridgeViewDrawer) findViewById(R.id.view);
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-        changeBitmap(R.drawable.heisenberg);
+        setContentView(new myView(this));
     }
 
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
-
-    /*@Override
-    public void onResume()
-    {
-        super.onResume();
-        //OpenCVLoader.initDebug();
-        //mOpenCvCameraView.enableView();
-    }*/
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this, mLoaderCallback);
-    }
+    private class myView extends View {
 
 
-    public void onDestroy() {
-        super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
+        private int imageWidth, imageHeight;
+        private int numberOfFace = 5;
+        private FaceDetector myFaceDetect;
+        private FaceDetector.Face[] myFace;
+        float myEyesDistance;
+        int numberOfFaceDetected = 0;
+        private OpenCvFaceDetector detector;
+        private String text_str;
 
-    public void onCameraViewStarted(int width, int height) {
-        detector.setAbsoluteFaceSize((int) (height * 0.2));
-    }
-
-    public void onCameraViewStopped() {
-    }
-
-    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-
-        detector.setCameraFrame(inputFrame.gray());
+        Bitmap myBitmap;
 
 
-        // Use the classifier to detect faces
-        detector.detect();
+        //
+        public myView(Context context) {
+            super(context);
+            detector = new OpenCvFaceDetector();
+
+            BitmapFactory.Options BitmapFactoryOptionsbfo = new BitmapFactory.Options();
+            BitmapFactoryOptionsbfo.inPreferredConfig = Bitmap.Config.RGB_565;
+            myBitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.face5, BitmapFactoryOptionsbfo);
+            imageWidth = myBitmap.getWidth();
+            imageHeight = myBitmap.getHeight();
+            myFace = new FaceDetector.Face[numberOfFace];
+            myFaceDetect = new FaceDetector(imageWidth, imageHeight,
+                    numberOfFace);
+            numberOfFaceDetected = myFaceDetect.findFaces(myBitmap, myFace);
 
 
-        // If there are any faces found, draw a rectangle around it
-        String new_text_str = String.valueOf(detector.getFacesCount());
-        if(!new_text_str.equals(text_str))        {
-            text_str = new_text_str;
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    TextView textView = (TextView)(findViewById(R.id.textView));
-                    textView.setText(text_str);
-                }
-            });
         }
-        Rect rect = detector.getNearestFaceRectangle();
-        if(rect!=null)
-            mOpenCvCameraView.setFaceRect(new android.graphics.Rect(rect.x,rect.y,rect.width+rect.x,rect.height+rect.y)  );
-        else mOpenCvCameraView.setFaceRect(null);
 
-        /*for (int i = 0; i <facesArray.length; i++)
-            Core.rectangle(inputFrame, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0, 255), 3);*/
-        return inputFrame.rgba();
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        heisenberg = menu.add("heisenberg");
-        items.put(heisenberg, R.drawable.heisenberg);
-        pict = menu.add("pict");
-        items.put(pict, R.drawable.pict);
-        mousestache = menu.add("mousestache");
-        items.put(mousestache, R.drawable.moustache);
-        r2d2 = menu.add("r2d2");
-        items.put(r2d2, R.drawable.r2d2);
-        black_hat = menu.add("black_hat");
-        items.put(black_hat, R.drawable.black_hat);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+        protected void onDraw(Canvas canvas) {
 
-        int id = items.get(item);
-        changeBitmap(id);
-        return true;
+            canvas.drawBitmap(myBitmap, 0, 0, null);
+
+            Paint myPaint = new Paint();
+            myPaint.setColor(Color.GREEN);
+            myPaint.setStyle(Paint.Style.STROKE);
+            myPaint.setStrokeWidth(3);
+
+            for (int i = 0; i < numberOfFaceDetected; i++) {
+                Face face = myFace[i];
+                PointF myMidPoint = new PointF();
+                face.getMidPoint(myMidPoint);
+                myEyesDistance = face.eyesDistance();
+
+                canvas.drawRect((int) (myMidPoint.x - myEyesDistance * 2),
+                        (int) (myMidPoint.y - myEyesDistance * 2),
+                        (int) (myMidPoint.x + myEyesDistance * 2),
+                        (int) (myMidPoint.y + myEyesDistance * 2), myPaint);
+            }
+            if (numberOfFaceDetected != -1) {
+
+                String new_text_str = String.valueOf(numberOfFaceDetected);
+                Log.e("OpenCvFaceDetector", new_text_str);
+            }
+
+        }
     }
 }
+
+
+
+
+
