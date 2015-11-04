@@ -116,6 +116,7 @@ public class TemplateElement {
         if(landmarks.size() == 2)
         {
             Log.d("DRAW","two landmarks "+frame_landmarks.size());
+
             LandmarkPoint one = null;
             LandmarkPoint two = null;
             for (LandmarkPoint p:
@@ -124,19 +125,7 @@ public class TemplateElement {
                     one = p;
                 if(p.type == landmarks.get(1).type)
                     two = p;
-                if(p.type == LandmarkType.EYES_LEFT)
-                    Log.d("DRAW","Found left eye");
-                if(p.type == LandmarkType.EYES_RIGHT)
-                    Log.d("DRAW","Found right eye");
             }
-            if(one == null)
-                Log.d("DRAW","one is null");
-            if(two == null)
-                Log.d("DRAW","two is null");
-            if(one == null || two == null)
-                return;
-            if(one.type == two.type)
-                Log.d("DRAW","equal types");
             if(one == null || two == null || one.type == two.type)
                 return;
             LandmarkPoint leftFramePoint = null,rightFramePoint = null;
@@ -161,10 +150,6 @@ public class TemplateElement {
                 leftBasePoint = landmarks.get(1);
                 rightBasePoint = landmarks.get(0);
             }
-            Log.d("DRAW","Left base "+leftBasePoint.point.x+" "+leftBasePoint.point.y+
-                    "Right base "+rightBasePoint.point.x+" "+rightBasePoint.point.y);
-            Log.d("DRAW","Left frame "+leftFramePoint.point.x+" "+leftFramePoint.point.y+
-                    "Right frame "+rightFramePoint.point.x+" "+rightFramePoint.point.y);
             boolean horStretch=false,vertStretch=false;
             if(Math.abs(landmarks.get(0).point.x-landmarks.get(1).point.x)>25)
                 horStretch = true;
@@ -176,18 +161,13 @@ public class TemplateElement {
             {
                 float scale = Math.abs((leftFramePoint.point.x-rightFramePoint.point.x)/
                         (leftBasePoint.point.x-rightBasePoint.point.x)/1.5f);
-                Log.d("RESCALE","Frame marks "+leftFramePoint.point.x+" "+rightFramePoint.point.x+" "
-                        +"Base "+leftBasePoint.point.x+" "+rightBasePoint.point.x+" scale "+scale);
                 left = (int)(leftFramePoint.point.x - leftBasePoint.point.x*scale);
 
                 if(left<0)
                     left = 0;
-                Log.d("RESCALE","Left eye point "+(left+leftBasePoint.point.x*scale));
-                //right = (int)(rightFramePoint.point.x + (bitmap.getWidth()-rightBasePoint.point.x)*scale);
                 right = (int)(left+bitmap.getWidth()*scale);
                 if(right > canvas.getWidth())
                     right = canvas.getWidth();
-                Log.d("RESCALE","Right eye point "+(left+rightBasePoint.point.x*scale));
 
                 if(/*!vertStretch*/true)
                 {
@@ -202,12 +182,6 @@ public class TemplateElement {
                     position = new Rect(left,top,right,bottom);
                     canvas.drawBitmap(bitmap,new Rect(0,0,bitmap.getWidth(), bitmap.getHeight()),
                             position,null);
-                    /*Paint paint = new Paint();
-                    paint.setColor(Color.BLUE);
-                    paint.setStyle(Paint.Style.STROKE); //no fill
-                    paint.setStrokeWidth(3);
-                    canvas.drawCircle(left, yFrame, 2, paint);
-                    canvas.drawCircle(right,yFrame,2,paint);*/
                     return;
                 }
             }

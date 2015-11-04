@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Detection is being runned in it's own thread continiously
+ * Detection is being run in it's own thread continuously
  * When any face (nearest one) is detected, it's  geometry is cached
  * All get methods return this cache
  */

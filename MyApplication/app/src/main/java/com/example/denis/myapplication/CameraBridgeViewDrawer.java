@@ -47,7 +47,9 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
 
     public void setTemplateDrawer(TemplateDrawer drawer)
     {
-        templateDrawer = drawer;
+        synchronized (this) {
+            templateDrawer = drawer;
+        }
     }
 
 
@@ -134,8 +136,8 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
                         if(rightEye!=null)
                             canvas.drawCircle(rightEye.x,rightEye.y,10,paint);
                         else
-                            Log.d("DRAW", "Not found right eye");*/
-                        /*PointF mouthLeft = gms_detector.getMouthLeft();
+                            Log.d("DRAW", "Not found right eye");
+                        PointF mouthLeft = gms_detector.getMouthLeft();
                         if(mouthLeft!=null)
                             canvas.drawCircle(mouthLeft.x,mouthLeft.y,10,paint);
                         PointF mouthRight = gms_detector.getMouthRight();

@@ -2,17 +2,10 @@ package com.example.denis.myapplication;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
-import android.media.FaceDetector;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ListPopupWindow;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import android.app.Activity;
@@ -20,7 +13,6 @@ import android.os.Bundle;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -30,33 +22,20 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.*;
 import org.opencv.core.Mat;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static android.graphics.Bitmap.Config.RGB_565;
 
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
     private CameraBridgeViewDrawer mOpenCvCameraView;
     private OpenCvFaceDetector detector;
-    private String text_str;
-    private String api_text;
-    private MenuItem               heisenberg; //Menu pictures
-    private MenuItem               pict;
-    private MenuItem               mousestache;
-    private MenuItem               r2d2;
-    private MenuItem               black_hat;
-    //private Map<MenuItem, Integer> items = new HashMap<>();//for Menu
-
-
-
+    private List<TemplateDrawer> drawers;
 
     /*
     Connect to OpenCVManager
@@ -115,9 +94,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.enableView();
     }
 
+    @Deprecated
     private void changeBitmap(int id) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
-        mOpenCvCameraView.setBitmap(bitmap);
+        //Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
+        //mOpenCvCameraView.setBitmap(bitmap);
     }
 
     @Override
@@ -132,21 +112,38 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.setOnClickListener(onClickListener);
         TextView texty = (TextView) findViewById(R.id.textView);
         texty.setOnClickListener(onClickListener);
-        changeBitmap(R.drawable.heisenberg);
 
+        drawers = new ArrayList<>();
+
+        //add badass drawer
         TemplateElement element_glasses = new TemplateElement();
         element_glasses.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.badass_glasses));
         element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(31, 41));
         element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT, new PointF(94, 42));
         TemplateElement element_moustache = new TemplateElement();
-        element_moustache.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.moustache ));
+        element_moustache.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.moustache));
         element_moustache.addLandmark(TemplateElement.LandmarkType.MOUTH_LEFT, new PointF(205, 258));
         element_moustache.addLandmark(TemplateElement.LandmarkType.MOUTH_RIGHT, new PointF(537, 251));
         TemplateDrawer drawer = new TemplateDrawer("Badass");
         drawer.addElement(element_glasses);
         drawer.addElement(element_moustache);
-        mOpenCvCameraView.setTemplateDrawer(drawer);
+        drawers.add(drawer);
 
+        //add heisenberg drawer
+        TemplateElement element_heis_glasses = new TemplateElement();
+        element_heis_glasses.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.heis_glasses));
+        element_heis_glasses.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(80, 54));
+        element_heis_glasses.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT, new PointF(256, 54));
+        TemplateElement element_hat = new TemplateElement();
+        element_hat.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.heis_hat));
+        element_hat.addLandmark(TemplateElement.LandmarkType.FACE_TOP_LEFT, new PointF(85, 148));
+        element_hat.addLandmark(TemplateElement.LandmarkType.FACE_TOP_RIGHT, new PointF(413, 148));
+        drawer = new TemplateDrawer("Heisenberg");
+        drawer.addElement(element_hat);
+        drawer.addElement(element_heis_glasses);
+
+        drawers.add(drawer);
+        mOpenCvCameraView.setTemplateDrawer(drawer);
     }
 
     @Override
@@ -187,30 +184,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
-        /*detector.setCameraFrame(inputFrame.gray());
-
-
-        // Use the classifier to detect faces
-        detector.detect();
-
-
-        // If there are any faces found, draw a rectangle around it
-        String new_text_str = String.valueOf(detector.getFacesCount());
-        if(!new_text_str.equals(text_str))        {
-            text_str = new_text_str;
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    TextView textView = (TextView)(findViewById(R.id.textView));
-                    textView.setText(text_str);
-                }
-            });
-        }
-        android.graphics.Rect rect = detector.getNearestFaceRectangle();
-        if(rect!=null)
-            mOpenCvCameraView.setFaceRect(rect);
-        else mOpenCvCameraView.setFaceRect(null);*/
-
         return inputFrame.rgba();
     }
 
@@ -230,19 +203,17 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Bitmap bitmap = null;
                 switch (item.getItemId()) {
                     case R.id.pict_heisenberg:
-                        changeBitmap(R.drawable.heisenberg);
+                        mOpenCvCameraView.setTemplateDrawer(drawers.get(1));
                         break;
-                    case R.id.pict_moustache:
-                        changeBitmap(R.drawable.moustache);
+                    case R.id.pict_badass:
+                        mOpenCvCameraView.setTemplateDrawer(drawers.get(0));
                         break;
                     default:
                         return false;
 
                 }
-                // mOpenCvCameraView.setBitmap(bitmap);
                 return true;
             }
         });

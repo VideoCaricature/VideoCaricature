@@ -7,8 +7,8 @@
         android:title="Heisenberg"
         />
     <item
-        android:id="@+id/pict_moustache"
-        android:icon="@drawable/moustache"
-        android:title="Moustache"
+        android:id="@+id/pict_badass"
+        android:icon="@drawable/badass_glasses"
+        android:title="Badass"
         />
 </menu>
