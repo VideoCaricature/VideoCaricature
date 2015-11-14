@@ -20,7 +20,14 @@ public interface IFaceLocator extends IDetector {
 
     RectF getNearestFaceRectangleFloat();
 
+     /*
+     Sets frame from camera
+     before detection
+      */
      void setFrame(Bitmap bm);
 
+     /*
+     Returns true if any faces detected in current frame
+      */
      boolean isFaceDetected();
 }

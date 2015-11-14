@@ -22,6 +22,7 @@ import java.io.InputStream;
 /*
 Class for face detection via OpenCV
  */
+@Deprecated
 public class OpenCvFaceDetector implements IDetector {
     protected Mat image;
     Rect[] faces;
