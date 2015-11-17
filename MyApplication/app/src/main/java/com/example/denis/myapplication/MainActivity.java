@@ -60,36 +60,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 
     private void initializeOpenCVDependencies() {
 
-        /*try {
-            // Copy the resource into a temp file so OpenCV can load it
-            InputStream is = getResources().openRawResource(R.raw.lbpcascade_frontalface);
-            File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-            File mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
-            FileOutputStream os = new FileOutputStream(mCascadeFile);
 
 
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-            is.close();
-            os.close();
-
-            detector = new OpenCvFaceDetector();
-            // Load the cascade classifier
-            if(!detector.loadCascadeClassifier(mCascadeFile))
-            {
-                Log.e("OpenCVActivity","Failed to load cascade from file");
-            }
-
-        } catch (Exception e) {
-            Log.e("OpenCVActivity", "Error loading cascade", e);
-
-        }*/
-
-        mOpenCvCameraView.initFaceDetector(2,getApplicationContext());
+        mOpenCvCameraView.initFaceDetector(1,getApplicationContext());
 
         // And we are ready to go
         mOpenCvCameraView.enableView();
@@ -121,10 +94,12 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         //add badass drawer
         TemplateElement element_glasses = new TemplateElement();
         element_glasses.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.badass_glasses));
-        element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(31, 41));
-        element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT, new PointF(94, 42));
+        element_glasses.setBitmapSize(156, 75);
+        element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(32, 42));
+        element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT, new PointF(93, 42));
         TemplateElement element_moustache = new TemplateElement();
         element_moustache.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.moustache));
+        element_moustache.setBitmapSize(800,330);
         element_moustache.addLandmark(TemplateElement.LandmarkType.MOUTH_LEFT, new PointF(205, 258));
         element_moustache.addLandmark(TemplateElement.LandmarkType.MOUTH_RIGHT, new PointF(537, 251));
         TemplateDrawer drawer = new TemplateDrawer("Badass");
@@ -132,13 +107,17 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         drawer.addElement(element_moustache);
         drawers.add(drawer);
 
+        mOpenCvCameraView.setTemplateDrawer(drawer);
+
         //add heisenberg drawer
         TemplateElement element_heis_glasses = new TemplateElement();
         element_heis_glasses.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.heis_glasses));
+        element_heis_glasses.setBitmapSize(330, 108);
         element_heis_glasses.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(80, 54));
         element_heis_glasses.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT, new PointF(256, 54));
         TemplateElement element_hat = new TemplateElement();
         element_hat.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.heis_hat));
+        element_hat.setBitmapSize(517,249);
         element_hat.addLandmark(TemplateElement.LandmarkType.FACE_TOP_LEFT, new PointF(85, 148));
         element_hat.addLandmark(TemplateElement.LandmarkType.FACE_TOP_RIGHT, new PointF(413, 148));
         drawer = new TemplateDrawer("Heisenberg");
@@ -146,7 +125,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         drawer.addElement(element_heis_glasses);
 
         drawers.add(drawer);
-        mOpenCvCameraView.setTemplateDrawer(drawer);
+
     }
 
     @Override
