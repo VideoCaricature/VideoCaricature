@@ -3,6 +3,7 @@ package com.example.denis.myapplication;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -24,6 +25,8 @@ import java.util.Set;
  * tied to landmarks with given positions
  */
 public class TemplateElement {
+
+
     public static class LandmarkPoint    {
         public PointF point;
         LandmarkType type;
@@ -47,6 +50,7 @@ public class TemplateElement {
     Bitmap bitmap;
     Rect position;
     List<LandmarkPoint> frame_landmarks;
+    private int bitmapWidth,bitmapHeight;
 
     public TemplateElement()
     {
@@ -65,6 +69,23 @@ public class TemplateElement {
 
     void setBitmap(Bitmap _bitmap){
         bitmap = _bitmap;
+        bitmapHeight = bitmap.getHeight();
+        bitmapWidth = bitmap.getWidth();
+    }
+
+    void setBitmapHeight(int height)
+    {
+        bitmapHeight = height;
+    }
+
+    public void setBitmapWidth(int width) {
+        this.bitmapWidth = width;
+    }
+
+    void setBitmapSize(int width,int height)
+    {
+        bitmapHeight = height;
+        bitmapWidth = width;
     }
 
     Set<LandmarkType> getRequiredLandmarks()    {
@@ -150,44 +171,63 @@ public class TemplateElement {
                 leftBasePoint = landmarks.get(1);
                 rightBasePoint = landmarks.get(0);
             }
-            boolean horStretch=false,vertStretch=false;
-            if(Math.abs(landmarks.get(0).point.x-landmarks.get(1).point.x)>25)
-                horStretch = true;
-            if(Math.abs(landmarks.get(1).point.y-landmarks.get(1).point.y)>25)
-                vertStretch = true;
+
             int left,right,top,bottom;
 
-            if(horStretch)
-            {
-                float scale = Math.abs((leftFramePoint.point.x-rightFramePoint.point.x)/
-                        (leftBasePoint.point.x-rightBasePoint.point.x)/1.5f);
-                left = (int)(leftFramePoint.point.x - leftBasePoint.point.x*scale);
+            float frameDx = (leftFramePoint.point.x-rightFramePoint.point.x);
+            float frameDy = (leftFramePoint.point.y-rightFramePoint.point.y);
+            float baseDx = (leftBasePoint.point.x-rightBasePoint.point.x);
+            float baseDy = (leftBasePoint.point.y-rightBasePoint.point.y);
 
-                if(left<0)
-                    left = 0;
-                right = (int)(left+bitmap.getWidth()*scale);
-                if(right > canvas.getWidth())
-                    right = canvas.getWidth();
+            float frameDist = (float)Math.sqrt(frameDx*frameDx+frameDy*frameDy);
+            float baseDist = (float)Math.sqrt(baseDx*baseDx+baseDy*baseDy);
 
-                if(/*!vertStretch*/true)
-                {
-                    float yBase = ((leftBasePoint.point.y+rightBasePoint.point.y)/2);
-                    float yFrame = ((leftFramePoint.point.y+rightFramePoint.point.y)/2);
-                    top = (int)(yFrame - scale * yBase);
-                    if(top < 0 )
-                        top = 0;
-                    bottom = (int)(top + scale*bitmap.getHeight());
-                    if(bottom < 0 )
-                        bottom = 0;
-                    position = new Rect(left,top,right,bottom);
-                    canvas.drawBitmap(bitmap,new Rect(0,0,bitmap.getWidth(), bitmap.getHeight()),
-                            position,null);
-                    return;
-                }
-            }
-            else
-                return;
+            float scale_x = frameDx/baseDx;
+            float scale_y = frameDy/baseDy;
+            float scale=scale_x;
+            /*if(scale_y>scale_x)
+                scale = scale_y;*/
+
+            float frameAngle = (float)(Math.asin(frameDy/frameDx)*180/Math.PI);
+            float baseAngle = (float)(Math.asin(baseDy/baseDx)*180/Math.PI);
+            float angle = frameAngle-baseAngle;
+
+            float xBase = ((leftBasePoint.point.x+rightBasePoint.point.x)/2);
+            float xFrame = ((leftFramePoint.point.x+rightFramePoint.point.x)/2);
+            left = (int)(xFrame-xBase*scale);
+            //left = (int)(leftFramePoint.point.x - leftBasePoint.point.x*scale);
+            if(left<0)
+                left = 0;
+
+            float yBase = ((leftBasePoint.point.y+rightBasePoint.point.y)/2);
+            float yFrame = ((leftFramePoint.point.y+rightFramePoint.point.y)/2);
+            top = (int)(yFrame - scale * yBase);
+            if(top < 0 )
+                top = 0;
+
+            Paint paint = new Paint();
+            paint.setColor(Color.BLUE);
+            paint.setStyle(Paint.Style.STROKE); //no fill
+            paint.setStrokeWidth(2);
+
+            float imageScaleX = (float)bitmap.getWidth()/bitmapWidth;
+            float imageScaleY = (float)bitmap.getHeight()/bitmapHeight;
+            Log.d("DETECT","image scale "+imageScaleX+" "+imageScaleY);
+            Log.d("DETECT", "bitmap " + bitmap.getWidth() + " " + bitmap.getHeight());
+
+            canvas.save();
+            canvas.translate(left, top);
+            canvas.scale(scale_x / imageScaleX, scale_x / imageScaleY);
+            canvas.rotate(angle);
+            canvas.drawBitmap(bitmap, 0, 0, null);
+
+            canvas.restore();
+            return;
 
         }
+        else
+            return;
+
+
     }
 }
