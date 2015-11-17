@@ -151,7 +151,7 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
                                     locator.getNearestFaceRectangleFloat());
                             templateDrawer.draw(canvas);
                         }
-                        /*Paint paint = new Paint();
+                        Paint paint = new Paint();
                         paint.setColor(Color.GREEN);
                         paint.setStyle(Paint.Style.STROKE); //no fill
                         paint.setStrokeWidth(5);
@@ -160,9 +160,9 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
                         float y1 = face.top; //x coordinate of top left position of the face within the image
                         float x2 = face.right; //width of the face region in pixels
                         float y2 = face.bottom; //height of the face region in pixels
-                        canvas.drawRoundRect(new RectF(x1 * (float) scale, y1 * (float) scale,
-                                x2 * (float) scale, y2 * (float) scale), 2, 2, paint);
-                        PointF leftEye = locator.getLeftEye();
+                        /*canvas.drawRoundRect(new RectF(x1 * (float) scale, y1 * (float) scale,
+                                x2 * (float) scale, y2 * (float) scale), 2, 2, paint);*/
+                        /*PointF leftEye = locator.getLeftEye();
                         if(leftEye!=null)
                             canvas.drawCircle(leftEye.x,leftEye.y,10,paint);
                         else
