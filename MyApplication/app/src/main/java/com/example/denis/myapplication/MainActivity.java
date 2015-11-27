@@ -2,6 +2,7 @@
 package com.example.denis.myapplication;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,24 +13,11 @@ import android.media.FaceDetector;
 import android.media.FaceDetector.Face;
 import android.os.Bundle;
 import android.view.View;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.FaceDetector;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import org.opencv.android.BaseLoaderCallback;
@@ -44,19 +32,17 @@ import org.opencv.core.*;
 import org.opencv.core.Mat;
 import org.opencv.objdetect.CascadeClassifier;
 import org.w3c.dom.Text;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 public class MainActivity extends Activity {
+
+        int numberOfFaceDetected ;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(new myView(this));
+        {
+            super.onCreate(savedInstanceState);
+            setContentView(new myView(this));
+        }
+
     }
 
     private class myView extends View {
@@ -67,14 +53,11 @@ public class MainActivity extends Activity {
         private FaceDetector myFaceDetect;
         private FaceDetector.Face[] myFace;
         float myEyesDistance;
-        int numberOfFaceDetected = 0;
+
         private OpenCvFaceDetector detector;
-        private String text_str;
 
         Bitmap myBitmap;
 
-
-        //
         public myView(Context context) {
             super(context);
             detector = new OpenCvFaceDetector();
@@ -89,7 +72,6 @@ public class MainActivity extends Activity {
             myFaceDetect = new FaceDetector(imageWidth, imageHeight,
                     numberOfFace);
             numberOfFaceDetected = myFaceDetect.findFaces(myBitmap, myFace);
-
 
         }
 
@@ -114,13 +96,10 @@ public class MainActivity extends Activity {
                         (int) (myMidPoint.x + myEyesDistance * 2),
                         (int) (myMidPoint.y + myEyesDistance * 2), myPaint);
             }
-            if (numberOfFaceDetected != -1) {
-
-                String new_text_str = String.valueOf(numberOfFaceDetected);
-                Log.e("OpenCvFaceDetector", new_text_str);
-            }
-
-        }
+                              Toast.makeText(MainActivity.this,
+                        "number of faces = " + numberOfFaceDetected,
+                        Toast.LENGTH_LONG).show();
+         }
     }
 }
 
