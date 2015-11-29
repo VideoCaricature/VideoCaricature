@@ -32,4 +32,15 @@ android:layout_height="match_parent"
         android:textColor="#AAAAAA"
         android:textSize="30sp" />
 
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="84dp"
+        android:text="Save"
+        android:id="@+id/textView3"
+        android:layout_gravity="end"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#AAAAAA"
+        android:onClick="saveBitmap"
+        android:textSize="30sp" />
+
 </FrameLayout>

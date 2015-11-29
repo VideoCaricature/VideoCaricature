@@ -169,6 +169,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         return inputFrame.rgba();
     }
 
+    public void saveBitmap(View view) {
+        mOpenCvCameraView.saveSignature();
+    }
 
 
     View.OnClickListener onClickListener = new View.OnClickListener() {

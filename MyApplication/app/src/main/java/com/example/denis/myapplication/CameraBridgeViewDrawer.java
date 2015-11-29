@@ -1,12 +1,14 @@
 package com.example.denis.myapplication;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -21,6 +23,8 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -188,6 +192,21 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
                 }
                 getHolder().unlockCanvasAndPost(canvas);
             }
+        }
+    }
+    public void saveSignature(){
+//        Bitmap  bitmap = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(bitmap);
+//        this.draw(canvas);
+
+//        Bitmap bitmap = getDrawingCache();
+
+        File file = new File(Environment.getExternalStorageDirectory() + "/sign.png");
+
+        try {
+            mCacheBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
