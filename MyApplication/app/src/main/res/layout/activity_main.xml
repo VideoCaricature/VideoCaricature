@@ -11,33 +11,36 @@ android:layout_height="match_parent"
     android:id="@+id/view"
     opencv:camera_id="any" />
 
-    <TextView
-        android:layout_width="247dp"
-        android:layout_height="84dp"
-        android:text="Template"
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/karikature"
         android:id="@+id/textView"
         android:layout_gravity="left|bottom"
+        android:scaleType="fitCenter"
         android:textColor="#AAAAAA"
         android:textSize="30sp"
         android:typeface="serif"
         android:gravity="center_vertical|center_horizontal" />
 
-    <TextView
-        android:layout_width="247dp"
-        android:layout_height="84dp"
-        android:text="Detector"
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/setting"
         android:id="@+id/textView2"
         android:layout_gravity="right|bottom"
+        android:scaleType="fitCenter"
         android:gravity="center_vertical|center_horizontal"
         android:textColor="#AAAAAA"
         android:textSize="30sp" />
 
-    <TextView
-        android:layout_width="100dp"
-        android:layout_height="84dp"
-        android:text="Save"
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/save"
         android:id="@+id/textView3"
         android:layout_gravity="end"
+        android:scaleType="fitCenter"
         android:gravity="center_vertical|center_horizontal"
         android:textColor="#AAAAAA"
         android:onClick="saveBitmap"

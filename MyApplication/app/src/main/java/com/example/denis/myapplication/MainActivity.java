@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -84,9 +85,9 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.setOnClickListener(onClickListener);
-        TextView texty = (TextView) findViewById(R.id.textView);
+        ImageButton texty = (ImageButton) findViewById(R.id.textView);
         texty.setOnClickListener(onClickListener);
-        texty = (TextView)findViewById(R.id.textView2);
+        texty = (ImageButton) findViewById(R.id.textView2);
         texty.setOnClickListener(onDetectorClickListener);
 
         drawers = new ArrayList<>();

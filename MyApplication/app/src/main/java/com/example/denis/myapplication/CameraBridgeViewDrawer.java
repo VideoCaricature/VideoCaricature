@@ -37,6 +37,8 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
     TemplateDrawer templateDrawer;
     boolean detect_started;
     int detectorType;
+    Bitmap saveBitmap, dumpBitmap;
+    static int fileCounter = 1;
     public CameraBridgeViewDrawer (Context context, int cameraId)
     {
         super(context,cameraId);
@@ -44,7 +46,9 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
 
     public CameraBridgeViewDrawer(Context context, AttributeSet attrs)
     {
-        super(context,attrs);
+        super(context, attrs);
+        // setLayerType(LAYER_TYPE_SOFTWARE, null);
+        // setDrawingCacheEnabled(true);
         detect_started = false;
         detectorType = 0;
     }
@@ -124,9 +128,12 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
         }
 
         if (bmpValid && mCacheBitmap != null) {
-            Canvas canvas = getHolder().lockCanvas();
+            Canvas srcCanvas = getHolder().lockCanvas();
             Log.d("DETECT", "REPAINTING");
-            if (canvas != null) {
+            if (srcCanvas != null) {
+                saveBitmap = Bitmap.createBitmap(srcCanvas.getWidth(), srcCanvas.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(saveBitmap);
+
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
                 Log.d(TAG, "mStretch value: " + mScale);
 
@@ -190,7 +197,9 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
                     mFpsMeter.measure();
                     mFpsMeter.draw(canvas, 20, 30);
                 }
-                getHolder().unlockCanvasAndPost(canvas);
+                srcCanvas.drawBitmap(saveBitmap, 0, 0, null);
+                dumpBitmap = saveBitmap.copy(saveBitmap.getConfig(), false);
+                getHolder().unlockCanvasAndPost(srcCanvas);
             }
         }
     }
@@ -201,10 +210,15 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
 
 //        Bitmap bitmap = getDrawingCache();
 
-        File file = new File(Environment.getExternalStorageDirectory() + "/sign.png");
+        String fileName = "/caricature" + Integer.toString(fileCounter) + ".png";
+        fileCounter++;
+
+        File file = new File(Environment.getExternalStorageDirectory() + fileName);
 
         try {
-            mCacheBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+            if (dumpBitmap != null) {
+                dumpBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
