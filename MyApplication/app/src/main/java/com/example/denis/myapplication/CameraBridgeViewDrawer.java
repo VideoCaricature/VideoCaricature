@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -203,24 +204,32 @@ public class CameraBridgeViewDrawer extends JavaCameraView {
             }
         }
     }
-    public void saveSignature(){
+    public boolean saveSignature(Context context){
 //        Bitmap  bitmap = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Bitmap.Config.ARGB_8888);
 //        Canvas canvas = new Canvas(bitmap);
 //        this.draw(canvas);
 
 //        Bitmap bitmap = getDrawingCache();
 
-        String fileName = "/caricature" + Integer.toString(fileCounter) + ".png";
+        String fileName = "Caricature " + Integer.toString(fileCounter) ;
         fileCounter++;
 
-        File file = new File(Environment.getExternalStorageDirectory() + fileName);
+        //File file = new File(Environment.getExternalStorageDirectory() + fileName);
+        String res = null;
+        if (dumpBitmap != null)
+            res = MediaStore.Images.Media.insertImage(context.getContentResolver(), dumpBitmap, fileName ,"Made with VideoCaricature");
+        if (res != null){
+            Log.d("SAVED",res);
+            return true;
+        }
+        else return false;
 
-        try {
+        /*try {
             if (dumpBitmap != null) {
                 dumpBitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }

@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import org.opencv.android.BaseLoaderCallback;
@@ -171,7 +172,16 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     }
 
     public void saveBitmap(View view) {
-        mOpenCvCameraView.saveSignature();
+
+        boolean res = mOpenCvCameraView.saveSignature(getApplicationContext());
+        if (res) {
+            Toast toast = Toast.makeText(getApplicationContext(),"Image saved to gallery", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        else {
+            Toast toast = Toast.makeText(getApplicationContext(),"Failed to save image", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
 
