@@ -25,14 +25,10 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
+import org.xmlpull.v1.XmlPullParser;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 public class MainActivity extends Activity implements CvCameraViewListener2 {
     private CameraBridgeViewDrawer mOpenCvCameraView;
@@ -76,6 +72,39 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         //mOpenCvCameraView.setBitmap(bitmap);
     }
 
+    private TemplateDrawer parseTemplate(String name){
+        TemplateDrawer drawer = new TemplateDrawer(name);
+        TemplateElement element = null;
+        try{
+            XmlPullParser parser = getResources().getXml(R.xml.class.getField(name.toLowerCase()).getInt(null)); // load xmlFile for parsing
+            while (parser.getEventType() != XmlPullParser.END_DOCUMENT ){
+                if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("element")) {
+                    element = new TemplateElement();
+                    try {
+                        element.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.class.getField(parser.getAttributeValue(0)).getInt(null)));
+                    }
+                    catch (Exception e){
+                        Log.e("xmlParser", "Failure to get drawable id.", e);
+                    }
+                    element.setBitmapSize(Integer.parseInt(parser.getAttributeValue(1)), Integer.parseInt(parser.getAttributeValue(2)));
+                }
+                if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("point")) {
+                    element.addLandmark(TemplateElement.LandmarkType.valueOf(parser.getAttributeValue(0)),
+                            new PointF(Integer.parseInt(parser.getAttributeValue(1)),
+                                    Integer.parseInt(parser.getAttributeValue(2))));
+                }
+                if (parser.getEventType() == XmlPullParser.END_TAG && parser.getName().equals("element")) {
+                    drawer.addElement(element);
+                }
+                parser.next();
+            }
+        }
+        catch(Exception e){
+            Log.e("xmlParser","Failure to get template element.", e);
+        }
+        return drawer;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,42 +121,11 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         texty.setOnClickListener(onDetectorClickListener);
 
         drawers = new ArrayList<>();
-
-        //add badass drawer
-        TemplateElement element_glasses = new TemplateElement();
-        element_glasses.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.badass_glasses));
-        element_glasses.setBitmapSize(156, 75);
-        element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(32, 42));
-        element_glasses.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT, new PointF(93, 42));
-        TemplateElement element_moustache = new TemplateElement();
-        element_moustache.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.moustache));
-        element_moustache.setBitmapSize(800,330);
-        element_moustache.addLandmark(TemplateElement.LandmarkType.MOUTH_LEFT, new PointF(205, 258));
-        element_moustache.addLandmark(TemplateElement.LandmarkType.MOUTH_RIGHT, new PointF(537, 251));
-        TemplateDrawer drawer = new TemplateDrawer("Badass");
-        drawer.addElement(element_glasses);
-        drawer.addElement(element_moustache);
+        TemplateDrawer drawer = parseTemplate("Badass");
         drawers.add(drawer);
-
         mOpenCvCameraView.setTemplateDrawer(drawer);
-
-        //add heisenberg drawer
-        TemplateElement element_heis_glasses = new TemplateElement();
-        element_heis_glasses.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.heis_glasses));
-        element_heis_glasses.setBitmapSize(330, 108);
-        element_heis_glasses.addLandmark(TemplateElement.LandmarkType.EYES_LEFT, new PointF(80, 54));
-        element_heis_glasses.addLandmark(TemplateElement.LandmarkType.EYES_RIGHT, new PointF(256, 54));
-        TemplateElement element_hat = new TemplateElement();
-        element_hat.setBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.heis_hat));
-        element_hat.setBitmapSize(517,249);
-        element_hat.addLandmark(TemplateElement.LandmarkType.FACE_TOP_LEFT, new PointF(85, 148));
-        element_hat.addLandmark(TemplateElement.LandmarkType.FACE_TOP_RIGHT, new PointF(413, 148));
-        drawer = new TemplateDrawer("Heisenberg");
-        drawer.addElement(element_hat);
-        drawer.addElement(element_heis_glasses);
-
+        drawer = parseTemplate("Heisenberg");
         drawers.add(drawer);
-
     }
 
     @Override

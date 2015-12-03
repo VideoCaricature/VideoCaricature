@@ -1,0 +1,10 @@
+<template name = "Heisenberg">
+    <element bitmap = "heis_glasses" width = "330" height = "108">
+        <point type = "EYES_LEFT" x = "80" y = "54"/>
+        <point type = "EYES_RIGHT" x = "256" y = "54"/>
+    </element>
+    <element bitmap = "heis_hat" width = "517" height = "249">
+        <point type = "FACE_TOP_LEFT" x = "85" y = "148"/>
+        <point type = "FACE_TOP_RIGHT" x = "413" y = "148"/>
+    </element>
+</template>
