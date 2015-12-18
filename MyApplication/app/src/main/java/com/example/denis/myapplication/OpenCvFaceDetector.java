@@ -1,6 +1,9 @@
 package com.example.denis.myapplication;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.util.Log;
 
 import org.opencv.core.Mat;
@@ -23,7 +26,7 @@ import java.io.InputStream;
 Class for face detection via OpenCV
  */
 @Deprecated
-public class OpenCvFaceDetector implements IDetector {
+public class OpenCvFaceDetector implements Runnable, IFaceLocator {
     protected Mat image;
     Rect[] faces;
     private CascadeClassifier cascadeClassifier;
@@ -91,5 +94,45 @@ public class OpenCvFaceDetector implements IDetector {
             }
         }
         return new android.graphics.Rect(maxface.x,maxface.y,maxface.width,maxface.height);
+    }
+
+    @Override
+    public PointF getLeftEye() {
+        return null;
+    }
+
+    @Override
+    public PointF getRightEye() {
+        return null;
+    }
+
+    @Override
+    public PointF getMouthLeft() {
+        return null;
+    }
+
+    @Override
+    public PointF getMouthRight() {
+        return null;
+    }
+
+    @Override
+    public RectF getNearestFaceRectangleFloat() {
+        return null;
+    }
+
+    @Override
+    public void setFrame(Bitmap bm) {
+
+    }
+
+    @Override
+    public boolean isFaceDetected() {
+        return false;
+    }
+
+    @Override
+    public void run() {
+
     }
 }

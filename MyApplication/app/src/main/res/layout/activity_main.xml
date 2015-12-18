@@ -1,15 +1,22 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:opencv="http://schemas.android.com/apk/res-auto"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
+    xmlns:opencv="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:id="@+id/R">
 
-<com.example.denis.myapplication.CameraBridgeViewDrawer
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:visibility="gone"
-    android:id="@+id/view"
-    opencv:camera_id="any" />
+    <SurfaceView
+        android:id="@+id/drawSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|left">
+    </SurfaceView>
+
+    <SurfaceView
+        android:id="@+id/cameraSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|left">
+    </SurfaceView>
 
     <TableLayout
         android:layout_width="200dp"

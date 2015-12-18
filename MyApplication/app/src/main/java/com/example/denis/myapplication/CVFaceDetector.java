@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Size;
@@ -169,7 +170,9 @@ public class CVFaceDetector implements Runnable, IFaceLocator {
 
     @Override
     public void setFrame(Bitmap bm) {
-
+        Mat mat = new Mat();
+        Utils.bitmapToMat(bm, mat);
+        setCameraFrame(mat);
     }
 
     @Override

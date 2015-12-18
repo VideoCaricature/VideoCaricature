@@ -1,41 +1,49 @@
 package com.example.denis.myapplication;
 
 
-import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
 import android.graphics.PointF;
+import android.graphics.RectF;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 
 import android.app.Activity;
-import android.os.Bundle;
+import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
 import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 
-public class MainActivity extends Activity implements CvCameraViewListener2 {
-    private CameraBridgeViewDrawer mOpenCvCameraView;
+public class MainActivity extends Activity implements SurfaceHolder.Callback {
+
+    private CameraBridgeViewDrawer cameraDrawer;
+    SurfaceView drawSv;
+    SurfaceHolder drawHolder;
+    SurfaceView cameraSv;
+    SurfaceHolder cameraHolder;
+    Camera camera;
+
+    final static int CAMERA_ID = 0;
+    final static boolean FULL_SCREEN = true;
 
     private List<TemplateDrawer> drawers;
 
@@ -47,7 +55,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         public void onManagerConnected(int status) {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS:
-                    initializeOpenCVDependencies();
+                    //initializeOpenCVDependencies();
                     break;
                 default:
                     super.onManagerConnected(status);
@@ -60,32 +68,43 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     Load data required for OpenCV Haar cascade
      */
 
-    private void initializeOpenCVDependencies() {
-
-
-
-        mOpenCvCameraView.initFaceDetector(1,getApplicationContext());
-
-        // And we are ready to go
-        mOpenCvCameraView.enableView();
-    }
+//    private void initializeOpenCVDependencies() {
+//        cameraDrawer.initFaceDetector(1,getApplicationContext());
+//
+//        // And we are ready to go
+//        cameraDrawer.enableView();
+//    }
 
     @Deprecated
     private void changeBitmap(int id) {
         //Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
-        //mOpenCvCameraView.setBitmap(bitmap);
+        //cameraDrawer.setBitmap(bitmap);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        //        WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        mOpenCvCameraView = (CameraBridgeViewDrawer) findViewById(R.id.view);
-        mOpenCvCameraView.setCameraIndex(98);
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.setOnClickListener(onClickListener);
+
+        drawSv = (SurfaceView) findViewById(R.id.drawSurfaceView);
+        drawHolder = drawSv.getHolder();
+        drawHolder.addCallback(drawHolderCallback);
+        drawHolder.setFormat(PixelFormat.TRANSLUCENT);
+
+        cameraSv = (SurfaceView) findViewById(R.id.cameraSurfaceView);
+        //cameraSv.setDrawingCacheEnabled(true);
+        cameraHolder = cameraSv.getHolder();
+        cameraHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        cameraHolder.addCallback(this);
+        cameraSv.setOnClickListener(onClickListener);
+
+        cameraDrawer = new CameraBridgeViewDrawer(drawHolder, cameraSv, drawSv);
+        cameraDrawer.initFaceDetector(1, getApplicationContext());
+
         ImageButton texty = (ImageButton) findViewById(R.id.textView);
         texty.setOnClickListener(onClickListener);
         texty = (ImageButton) findViewById(R.id.textView2);
@@ -109,7 +128,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         drawer.addElement(element_moustache);
         drawers.add(drawer);
 
-        mOpenCvCameraView.setTemplateDrawer(drawer);
+        cameraDrawer.setTemplateDrawer(drawer);
 
         //add heisenberg drawer
         TemplateElement element_heis_glasses = new TemplateElement();
@@ -131,11 +150,23 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        camera = Camera.open(CAMERA_ID);
+        //camera.setPreviewCallback(cameraDrawer);
+        setPreviewSize(FULL_SCREEN);
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this, mLoaderCallback);
+    }
+
+    @Override
     public void onPause()
     {
         super.onPause();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
+        if (camera != null) {
+            camera.setPreviewCallback(null);
+            camera.release();
+        }
+        camera = null;
     }
 
     /*@Override
@@ -143,37 +174,30 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     {
         super.onResume();
         //OpenCVLoader.initDebug();
-        //mOpenCvCameraView.enableView();
+        //cameraDrawer.enableView();
     }*/
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this, mLoaderCallback);
-    }
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if (cameraDrawer != null)
+//            cameraDrawer.disableView();
+//    }
 
-
-    public void onDestroy() {
-        super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
-
-    public void onCameraViewStarted(int width, int height) {
-
-    }
-
-    public void onCameraViewStopped() {
-    }
-
-    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-
-        return inputFrame.rgba();
-    }
+//    public void onCameraViewStarted(int width, int height) {
+//
+//    }
+//
+//    public void onCameraViewStopped() {
+//    }
+//
+//    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+//
+//        return inputFrame.rgba();
+//    }
 
     public void saveBitmap(View view) {
 
-        boolean res = mOpenCvCameraView.saveSignature(getApplicationContext());
+        boolean res = cameraDrawer.saveSignature(getApplicationContext());
         if (res) {
             Toast toast = Toast.makeText(getApplicationContext(),"Image saved to gallery", Toast.LENGTH_SHORT);
             toast.show();
@@ -184,6 +208,147 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         }
     }
 
+    @Override
+    public void surfaceCreated(SurfaceHolder holder)
+    {
+        try {
+            camera.setPreviewDisplay(holder);
+            //camera.setPreviewCallback(cameraDrawer);
+            camera.startPreview();
+            //Log.d("SURFACE", "Surface created");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
+    {
+        camera.stopPreview();
+        setCameraDisplayOrientation(CAMERA_ID);
+        try {
+            camera.setPreviewDisplay(holder);
+            camera.setPreviewCallback(cameraDrawer);
+            camera.startPreview();
+            //Log.d("SURFACE", "Surface changed");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder)
+    {
+
+    }
+
+    void setPreviewSize(boolean fullScreen)
+    {
+
+        // получаем размеры экрана
+        Display display = getWindowManager().getDefaultDisplay();
+        boolean widthIsMax = display.getWidth() > display.getHeight();
+        cameraDrawer.setDispRect(new RectF(0, 0, display.getWidth(), display.getHeight()));
+
+        // определяем размеры превью камеры
+        Camera.Size size = camera.getParameters().getPreviewSize();
+
+        RectF rectDisplay = new RectF();
+        RectF rectPreview = new RectF();
+
+        // RectF экрана, соотвествует размерам экрана
+        rectDisplay.set(0, 0, display.getWidth(), display.getHeight());
+
+        // RectF первью
+        if (widthIsMax) {
+            // превью в горизонтальной ориентации
+            rectPreview.set(0, 0, size.width, size.height);
+        } else {
+            // превью в вертикальной ориентации
+            rectPreview.set(0, 0, size.height, size.width);
+        }
+
+        Matrix matrix = new Matrix();
+        // подготовка матрицы преобразования
+        if (!fullScreen) {
+            // если превью будет "втиснут" в экран (второй вариант из урока)
+            matrix.setRectToRect(rectPreview, rectDisplay,
+                    Matrix.ScaleToFit.START);
+        } else {
+            // если экран будет "втиснут" в превью (третий вариант из урока)
+            matrix.setRectToRect(rectDisplay, rectPreview,
+                    Matrix.ScaleToFit.START);
+            matrix.invert(matrix);
+        }
+        // преобразование
+        matrix.mapRect(rectPreview);
+        cameraDrawer.setPrevRect(rectPreview);
+
+        // установка размеров surface из получившегося преобразования
+
+        cameraSv.getLayoutParams().height = (int) (rectPreview.bottom);
+        cameraSv.getLayoutParams().width = (int) (rectPreview.right);
+        drawSv.getLayoutParams().height = (int) (rectPreview.bottom);
+        drawSv.getLayoutParams().width = (int) (rectPreview.right);
+    }
+
+    void setCameraDisplayOrientation(int cameraId) {
+        // определяем насколько повернут экран от нормального положения
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result = 0;
+
+        // получаем инфо по камере cameraId
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraId, info);
+
+        // задняя камера
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+            result = ((360 - degrees) + info.orientation);
+        } else
+            // передняя камера
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                result = ((360 - degrees) - info.orientation);
+                result += 360;
+            }
+        result = result % 360;
+        cameraDrawer.setOrientation(result);
+        Log.d("DISPLAY ORIENTATION", "Result: " + result);
+        camera.setDisplayOrientation(result);
+    }
+
+    SurfaceHolder.Callback drawHolderCallback = new SurfaceHolder.Callback() {
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            cameraDrawer.setSurfaceReady();
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+
+        }
+
+    };
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
@@ -209,10 +374,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.pict_heisenberg:
-                        mOpenCvCameraView.setTemplateDrawer(drawers.get(1));
+                        cameraDrawer.setTemplateDrawer(drawers.get(1));
                         break;
                     case R.id.pict_badass:
-                        mOpenCvCameraView.setTemplateDrawer(drawers.get(0));
+                        cameraDrawer.setTemplateDrawer(drawers.get(0));
                         break;
                     default:
                         return false;
@@ -233,10 +398,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.detector_opencv:
-                        mOpenCvCameraView.initFaceDetector(2,getApplicationContext());
+                        cameraDrawer.initFaceDetector(2, getApplicationContext());
                         break;
                     case R.id.detector_gms:
-                        mOpenCvCameraView.initFaceDetector(1, getApplicationContext());
+                        cameraDrawer.initFaceDetector(1, getApplicationContext());
                         break;
                     default:
                         return false;
