@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.vision.face.Landmark;
@@ -218,7 +217,9 @@ public class TemplateElement {
             canvas.save();
             canvas.translate(left, top);
             canvas.scale(scale_x / imageScaleX, scale_x / imageScaleY);
+            canvas.translate(bitmapWidth / 2.0f, bitmapHeight/2.0f);
             canvas.rotate(angle);
+            canvas.translate(-bitmapWidth/2.0f, -bitmapHeight/2.0f);
             canvas.drawBitmap(bitmap, 0, 0, null);
 
             canvas.restore();
