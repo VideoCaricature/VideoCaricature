@@ -12,28 +12,28 @@ import org.opencv.core.Mat;
  */
 public interface IDetector {
 
-    /*
+    /**
     Method called for every frame to set up a picture for detector
      */
     public void setCameraFrame(Mat mat);
 
-    /*
+    /**
     Method is called after void setCameraFrame(Mat mat); to detect all faces
      */
     public void detect();
 
-    /*
+    /**
     Method returns number of recognised faces
      */
     public int getFacesCount();
 
-    /*
+    /**
     Must return the biggest face rectangle avaliable
     or null, if no faces were detected
      */
     public Rect getNearestFaceRectangle();
 
-    /*
+    /**
     Used to set face size for detector to work properly
      */
     public void setAbsoluteFaceSize(int size);

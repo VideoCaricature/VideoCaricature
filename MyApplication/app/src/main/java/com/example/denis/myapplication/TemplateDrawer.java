@@ -23,6 +23,7 @@ public class TemplateDrawer {
         name = _name;
     }
 
+    /**установка ключевых точек*/
     void setLandmarks(List<Landmark> frameLandmarks,RectF faceRect)
     {
         ArrayList<TemplateElement.LandmarkPoint> landmarks = new ArrayList<>();
@@ -64,6 +65,7 @@ public class TemplateDrawer {
         }
     }
 
+    /**отрисовка*/
     void draw(Canvas canvas)
     {
         for (TemplateElement e:
@@ -72,6 +74,7 @@ public class TemplateDrawer {
         }
     }
 
+    /**добавление шаблона*/
     void addElement(TemplateElement elem)
     {
         elements.add(elem);

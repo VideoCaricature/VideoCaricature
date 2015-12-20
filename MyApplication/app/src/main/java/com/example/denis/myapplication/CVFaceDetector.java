@@ -34,7 +34,7 @@ public class CVFaceDetector implements Runnable, IFaceLocator {
     RectF nearestFaceRectangleFloat;
     PointF leftEye,rightEye,leftMouth,rightMouth;
 
-
+    /**openCV detector*/
     public CVFaceDetector (Context context)    {
         detected = false;
         isFaceDetected = false;
@@ -63,28 +63,32 @@ public class CVFaceDetector implements Runnable, IFaceLocator {
 
         }
     }
-
+    /**установить размер лица*/
     @Override
     public void setAbsoluteFaceSize(int size) {
         absoluteFaceSize = size;
     }
 
+    /**установить frame*/
     @Override
     public void setCameraFrame(Mat mat) {
         detected = false;
         image = mat;
     }
 
+    /**получить ближайшее лицо*/
     @Override
     public Rect getNearestFaceRectangle() {
         return null;
     }
 
+    /**получить ближайшее лицо*/
     @Override
     public RectF getNearestFaceRectangleFloat() {
         return nearestFaceRectangleFloat;
     }
 
+    /**обнаружение лица*/
     @Override
     public void detect() {
         if(cascadeClassifier == null || image == null || detected)
@@ -134,6 +138,7 @@ public class CVFaceDetector implements Runnable, IFaceLocator {
 
     }
 
+    /**подсчет количества лиц*/
     @Override
     public int getFacesCount() {
         if(faces!=null)
@@ -141,33 +146,38 @@ public class CVFaceDetector implements Runnable, IFaceLocator {
         else return 0;
     }
 
+    /**найдено ли лицо*/
     @Override
     public boolean isFaceDetected() {
         return isFaceDetected;
     }
 
+    /**координаты левого глаза*/
     @Override
     public PointF getLeftEye() {
         return leftEye;
     }
 
+    /**координаты рта (левой части)*/
     @Override
     public PointF getMouthLeft() {
         return leftMouth;
     }
 
+    /**координаты рта (правой части)*/
     @Override
     public PointF getMouthRight() {
         return rightMouth;
     }
 
+    /**координаты правого глаза*/
     @Override
     public PointF getRightEye() {
         return rightEye;
     }
 
 
-
+    /**bitmap to mat*/
     @Override
     public void setFrame(Bitmap bm) {
         Mat mat = new Mat();
@@ -175,6 +185,7 @@ public class CVFaceDetector implements Runnable, IFaceLocator {
         setCameraFrame(mat);
     }
 
+    /**запуск поиска лиц*/
     @Override
     public void run() {
         while(true)

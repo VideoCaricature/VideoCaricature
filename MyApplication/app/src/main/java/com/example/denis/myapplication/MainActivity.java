@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+/**Main Activity application*/
 public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     private CameraBridgeViewDrawer cameraDrawer;
@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     private List<TemplateDrawer> drawers;
 
-    /*
+    /**
     Connect to OpenCVManager
      */
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -195,6 +195,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 //        return inputFrame.rgba();
 //    }
 
+    /**save Bitmap*/
     public void saveBitmap(View view) {
 
         boolean res = cameraDrawer.saveSignature(getApplicationContext());
@@ -208,6 +209,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         }
     }
 
+    /**surfaceCreated*/
     @Override
     public void surfaceCreated(SurfaceHolder holder)
     {
@@ -221,6 +223,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         }
     }
 
+    /**surfaceChanged*/
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     {
@@ -242,6 +245,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
     }
 
+    /**получение размеров экрана, установка размеров surface*/
     void setPreviewSize(boolean fullScreen)
     {
 
@@ -292,6 +296,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         drawSv.getLayoutParams().width = (int) (rectPreview.right);
     }
 
+    /**ориентация камеры*/
     void setCameraDisplayOrientation(int cameraId) {
         // определяем насколько повернут экран от нормального положения
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
@@ -366,6 +371,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         }
     };
 
+    /**меню для выбора карикатур*/
     private void showPopupMenu(View v,PopupMenu popupMenu) {
 
         popupMenu.inflate(R.menu.pictures_menu);
@@ -390,6 +396,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         popupMenu.show();
     }
 
+
+    /**меню для выбора детектора*/
     private void showDetectorPopupMenu(View v,PopupMenu popupMenu) {
 
         popupMenu.inflate(R.menu.detector_menu);

@@ -72,6 +72,7 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
 //        detectorType = 0;
 //    }
 
+    /**camera view*/
     public CameraBridgeViewDrawer(SurfaceHolder holder, SurfaceView cameraView, SurfaceView drawView)
     {
         //this.activity = activity;
@@ -83,11 +84,13 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
         this.holder = holder;
     }
 
+    /**set Surface*/
     public void setSurfaceReady()
     {
         surfaceReady = true;
     }
 
+    /**set DispRect*/
     public void setDispRect(RectF rect){
         dispRect = rect;
     }
@@ -97,11 +100,13 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
         sizeMatrix = matrix;
     }
 
+    /**set PrevRect*/
     public void setPrevRect(RectF rect)
     {
         prevRect = rect;
     }
 
+    /**ориентация экрана*/
     public void setOrientation(int orientation)
     {
 //        Camera.CameraInfo ci = new Camera.CameraInfo();
@@ -115,6 +120,7 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
             this.orientation = orientation;
     }
 
+    /**установить шаблон для рисования*/
     public void setTemplateDrawer(TemplateDrawer drawer)
     {
         synchronized (this) {
@@ -122,6 +128,7 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
         }
     }
 
+    /**инициализация и выбор детекторов*/
     public void initFaceDetector(int type, Context context)
     {
         synchronized (this) {
@@ -141,7 +148,7 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
     }
 
 
-
+    /**запускаем поиск лиц, накладываем шаблон на обнаруженное лицо*/
     @Override
     public void onPreviewFrame(byte[] data, Camera camera)
     {
@@ -329,6 +336,7 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
         return Bitmap.createBitmap(t_bmp, 0, 0, width, height);
     }
 
+    /**зеркальное отображение*/
     Bitmap mirrorImage(Bitmap bmp)
     {
         Matrix matrix = new Matrix();
@@ -336,6 +344,7 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
         return Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
     }
 
+    /**поворот изображения*/
     static Bitmap rotateImage(Bitmap bmp, int deg)
     {
         Matrix matrix = new Matrix();
@@ -352,6 +361,7 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
         return Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
     }
 
+    /**сохраняем карикатуру в галерею*/
     public boolean saveSignature(Context context){
 //        Bitmap  bitmap = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Bitmap.Config.ARGB_8888);
 //        Canvas canvas = new Canvas(bitmap);
@@ -381,6 +391,7 @@ public class CameraBridgeViewDrawer implements Camera.PreviewCallback{
         }*/
     }
 
+    /**decode to rgb*/
     void decodeYUV420SP(int[] rgb, byte[] yuv420sp, int width, int height) {
 
         final int frameSize = width * height;

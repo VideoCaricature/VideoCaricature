@@ -22,7 +22,7 @@ import java.io.InputStream;
         * OpenCV detector and API detector must implement this interface
 */
 
-/*
+/**
 Class for face detection via OpenCV
  */
 @Deprecated

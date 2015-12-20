@@ -39,13 +39,13 @@ public class GmsFaceDetector implements Runnable , IFaceLocator {
     private PointF leftEye,rightEye,mouthLeft,mouthRight; //landmarks of detected face
     private List<Landmark> landmarksList;
 
-
+    /**подсчет количества лиц*/
     @Override
     public int getFacesCount() {
         return cachedFacesCount;
     }
 
-    /*
+    /**
     This function is called in separate thread infinite loop
     It performs detection and caches face geometry
      */
@@ -137,32 +137,38 @@ public class GmsFaceDetector implements Runnable , IFaceLocator {
         return landmarksList;
     }
 
+    /**координаты левого глаза*/
     @Override
     public PointF getLeftEye()
     {
         return leftEye;
     }
 
+    /**координаты правого глаза*/
     @Override
     public PointF getRightEye()  {
         return rightEye;
     }
 
+    /**координаты рта (левой части)*/
     @Override
     public PointF getMouthLeft() {
         return mouthLeft;
     }
 
+    /**координаты рта (правой части)*/
     @Override
     public PointF getMouthRight() {
         return mouthRight;
     }
 
+    /**получить ближайшее лицо*/
     @Override
     public Rect getNearestFaceRectangle() {
         return cachedNearestFace;
     }
 
+    /**получить ближайшее лицо*/
     @Override
     public RectF getNearestFaceRectangleFloat()
     {
@@ -174,6 +180,7 @@ public class GmsFaceDetector implements Runnable , IFaceLocator {
 
     }
 
+    /**принятие кадра*/
     @Override
     public void setFrame(Bitmap bm){
         frame = new Frame.Builder().setBitmap(bm).build();
@@ -184,7 +191,7 @@ public class GmsFaceDetector implements Runnable , IFaceLocator {
     public void setAbsoluteFaceSize(int size) {
 
     }
-
+    /**Google Play Services detector*/
     public GmsFaceDetector (Context context)    {
         faceDetector = new FaceDetector.Builder(context).setTrackingEnabled(true).setMode(0).
                 setLandmarkType(FaceDetector.ALL_LANDMARKS).
@@ -195,6 +202,7 @@ public class GmsFaceDetector implements Runnable , IFaceLocator {
         cachedFacesCount  = 0;
     }
 
+    /**запуск детектора*/
     @Override
     public void run() {
         while(true)
@@ -203,6 +211,7 @@ public class GmsFaceDetector implements Runnable , IFaceLocator {
         }
     }
 
+    /**найдено ли лицо*/
     @Override
     public boolean isFaceDetected()
     {
