@@ -72,39 +72,6 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         //mOpenCvCameraView.setBitmap(bitmap);
     }
 
-    private TemplateDrawer parseTemplate(String name){
-        TemplateDrawer drawer = new TemplateDrawer(name);
-        TemplateElement element = null;
-        try{
-            XmlPullParser parser = getResources().getXml(R.xml.class.getField(name.toLowerCase()).getInt(null)); // load xmlFile for parsing
-            while (parser.getEventType() != XmlPullParser.END_DOCUMENT ){
-                if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("element")) {
-                    element = new TemplateElement();
-                    try {
-                        element.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.class.getField(parser.getAttributeValue(0)).getInt(null)));
-                    }
-                    catch (Exception e){
-                        Log.e("xmlParser", "Failure to get drawable id.", e);
-                    }
-                    element.setBitmapSize(Integer.parseInt(parser.getAttributeValue(1)), Integer.parseInt(parser.getAttributeValue(2)));
-                }
-                if (parser.getEventType() == XmlPullParser.START_TAG && parser.getName().equals("point")) {
-                    element.addLandmark(TemplateElement.LandmarkType.valueOf(parser.getAttributeValue(0)),
-                            new PointF(Integer.parseInt(parser.getAttributeValue(1)),
-                                    Integer.parseInt(parser.getAttributeValue(2))));
-                }
-                if (parser.getEventType() == XmlPullParser.END_TAG && parser.getName().equals("element")) {
-                    drawer.addElement(element);
-                }
-                parser.next();
-            }
-        }
-        catch(Exception e){
-            Log.e("xmlParser","Failure to get template element.", e);
-        }
-        return drawer;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,10 +88,13 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         texty.setOnClickListener(onDetectorClickListener);
 
         drawers = new ArrayList<>();
-        TemplateDrawer drawer = parseTemplate("Badass");
+
+        XmlTemplateReader tmpBadass = new XmlTemplateReader(getApplicationContext(),"Badass");
+        TemplateDrawer drawer = tmpBadass.getElement();
         drawers.add(drawer);
         mOpenCvCameraView.setTemplateDrawer(drawer);
-        drawer = parseTemplate("Heisenberg");
+        XmlTemplateReader tmpHeisenberg = new XmlTemplateReader(getApplicationContext(),"Heisenberg");
+        drawer = (tmpHeisenberg.getElement());
         drawers.add(drawer);
     }
 
